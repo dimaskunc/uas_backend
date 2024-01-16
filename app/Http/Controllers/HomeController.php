@@ -22,10 +22,15 @@ class HomeController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'User',
         ]);
 
         if($user){
-            return response()->json(['message' => 'succesfuly'], 201);
+            http_response_code(201);
+            return response()->json(['message' => 'succesfuly']);
+        } else {
+            http_response_code(400);
+            return response()->json(['message' => 'gagal']);
         }
     }
 
@@ -37,7 +42,7 @@ class HomeController extends Controller
             $token = $user->createToken('kode_rahassia')->accessToken;
             $token = $user->createToken('kode_rahassia')->plainTextToken;
 
-            return response()->json(['token' => $token], 200);
+            return response()->json(['token' => $token, 'role'=> $user->role], 200);
         }
 
         throw ValidationException::withMessages([

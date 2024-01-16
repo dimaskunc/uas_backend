@@ -25,16 +25,10 @@ class KostController extends Controller
 
     public function store(Request $request)
     {
-        if ($request->file('image')) {
-            $fileName = uniqid() . '-' . $request->file('image')->getClientOriginalName();
-            $request->file('image')->move(public_path('img'), $fileName);
-        }
-
         $kost = Kost::create([
             'name' => $request->name,
             'type' => $request->type,
             'photo' => $request->photo,
-            'file_name' => $fileName,
             'location' => $request->location,
             'price' => $request->price,
             'facilities' => $request->facilities,
@@ -72,20 +66,6 @@ class KostController extends Controller
 
         if (!$kost) {
             return response()->json(['message' => 'Kost not found'], 404);
-        }
-
-        if ($request->file('image')) {
-            $fileName = uniqid() . '-' . $request->file('image')->getClientOriginalName();
-
-            $request->file('image')->move(public_path('img'), $fileName);
-
-            if ($kost->file_name !== "default.jpg") {
-                unlink(public_path('img/').$kost->file_name);
-            }
-            
-            $kost->update([
-                'file_name' => $fileName,
-            ]);
         }
 
         $kost->update([
